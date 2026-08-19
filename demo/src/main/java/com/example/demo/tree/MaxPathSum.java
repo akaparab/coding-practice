@@ -1,5 +1,11 @@
 package com.example.demo.tree;
 
+import java.awt.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
+
 public class MaxPathSum {
 
     int maxSum = Integer.MIN_VALUE;
@@ -49,6 +55,93 @@ public class MaxPathSum {
                 Math.max(leftGain, rightGain);
     }
 
+    static class Frame {
+        TreeNode node;
+        boolean visited;
+
+        Frame(TreeNode node, boolean visited) {
+            this.node = node;
+            this.visited = visited;
+        }
+    }
+
+    /**
+     * For large skewed tree, stack overflow can happen
+     * Use iterator
+     */
+    public int maxPathSumIterator(TreeNode root) {
+
+        if (root == null) {
+            return 0;
+        }
+
+        int maxSum = Integer.MIN_VALUE;
+
+        // Stores the result that each node contributes
+        // to its parent.
+        Map<TreeNode, Integer> contribution = new HashMap<>();
+
+        Deque<Frame> stack = new ArrayDeque<>();
+
+        stack.push(new Frame(root, false));
+
+        while (!stack.isEmpty()) {
+
+            Frame frame = stack.pop();
+
+            TreeNode node = frame.node;
+
+            if (node == null) {
+                continue;
+            }
+
+            if (!frame.visited) {
+
+                // Post-order:
+                // left -> right -> node
+
+                stack.push(new Frame(node, true));
+
+                if (node.right != null) {
+                    stack.push(new Frame(node.right, false));
+                }
+
+                if (node.left != null) {
+                    stack.push(new Frame(node.left, false));
+                }
+
+            } else {
+
+                int left =
+                        contribution.getOrDefault(
+                                node.left, 0);
+
+                int right =
+                        contribution.getOrDefault(
+                                node.right, 0);
+
+                left = Math.max(0, left);
+                right = Math.max(0, right);
+
+                // Complete path through current node
+                int currentPath =
+                        node.val + left + right;
+
+                maxSum =
+                        Math.max(maxSum, currentPath);
+
+                // Contribution to parent
+                int nodeContribution =
+                        node.val + Math.max(left, right);
+
+                contribution.put(node, nodeContribution);
+            }
+        }
+
+        return maxSum;
+    }
+
+
     public static void main(String[] args) {
         // root = [5,4,8,11,null,13,4,7,2,null,null,null,1],
 
@@ -68,5 +161,7 @@ public class MaxPathSum {
 
         MaxPathSum it = new MaxPathSum();
         System.out.println("max Sum: " + it.maxPathSum(root));
+        System.out.println("max Sum: " + it.maxPathSumIterator(root));
+
     }
 }

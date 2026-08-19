@@ -40,9 +40,9 @@ public class InsertInterval {
 
         InsertInterval am = new InsertInterval();
 
-        // int[][] res = am.insertIntervals(intervals, interval);
+        int[][] res = am.insertIntervals(intervals, interval);
         int[][] res1 = am.insertIntervals(intervals1, interval1);
-        for (int[] it : res1) {
+        for (int[] it : res) {
             System.out.println(Arrays.toString(it));
         }
 

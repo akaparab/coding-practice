@@ -86,6 +86,33 @@ public class LongestRepeatCharacter {
         return maxLen;
     }
 
+    public String characterReplacementStr(String s, int k) {
+        int[] freq = new int[26];
+
+        int left = 0;
+        int maxFreq = 0;
+        int maxLen = 0;
+        String res = "";
+
+        for (int right = 0; right < s.length(); right++) {
+            char c = s.charAt(right);
+            freq[c - 'A']++;
+            maxFreq = Math.max(maxFreq, freq[c - 'A']);
+
+            while ((right - left + 1) - maxFreq > k) {
+                freq[s.charAt(left) - 'A']--;
+                left++;
+            }
+            if (right - left + 1 > maxLen) {
+                res = s.substring(left, right + 1);
+            }
+            maxLen = Math.max(
+                    maxLen,
+                    right - left + 1);
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         String s = "BBABCCDD";
         int k = 2;
@@ -98,5 +125,8 @@ public class LongestRepeatCharacter {
 
         System.out.println(lrc.characterReplacement(s, k));
         System.out.println(lrc.characterReplacement(s1, k));
+
+        System.out.println(lrc.characterReplacementStr(s, k));
+        System.out.println(lrc.characterReplacementStr(s1, k));
     }
 }

@@ -3,6 +3,7 @@ package com.example.demo.heap;
 import com.example.demo.ListCycle;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -44,6 +45,46 @@ public class MergeKLists {
         return dummy.next;
     }
 
+    public List<Integer> mergeKSortedLists(
+            List<List<Integer>> lists) {
+
+        PriorityQueue<Node> minHeap =
+                new PriorityQueue<>(
+                        Comparator.comparingInt(n -> n.value)
+                );
+
+        for (int i = 0; i < lists.size(); i++) {
+            if (!lists.get(i).isEmpty()) {
+                minHeap.offer(
+                        new Node(lists.get(i).get(0), i, 0)
+                );
+            }
+        }
+
+        List<Integer> result = new ArrayList<>();
+
+        while (!minHeap.isEmpty()) {
+
+            Node node = minHeap.poll();
+
+            result.add(node.value);
+
+            int nextIndex = node.elementIndex + 1;
+            if (nextIndex < lists.get(node.listIndex).size()) {
+
+                minHeap.offer(
+                        new Node(
+                                lists.get(node.listIndex).get(nextIndex),
+                                node.listIndex,
+                                nextIndex
+                        )
+                );
+            }
+        }
+
+        return result;
+    }
+
     public static void main(String[] args) {
         List<ListNode> lists = new ArrayList<>();
         // [3,4,6],[2,3,5],[-1,6]
@@ -67,6 +108,13 @@ public class MergeKLists {
 
         mkl.printList(res);
 
+        List<List<Integer>> list = List.of(
+                List.of(1, 4, 5),
+                List.of(1, 3, 4),
+                List.of(2, 6)
+        );
+        System.out.println(mkl.mergeKSortedLists(list));
+
     }
 
     public void printList(ListNode head) {
@@ -74,6 +122,18 @@ public class MergeKLists {
         while (node != null) {
             System.out.print(node.val + " ");
             node = node.next;
+        }
+    }
+
+    static class Node {
+        int value;
+        int listIndex;
+        int elementIndex;
+
+        Node(int value, int listIndex, int elementIndex) {
+            this.value = value;
+            this.listIndex = listIndex;
+            this.elementIndex = elementIndex;
         }
     }
 }

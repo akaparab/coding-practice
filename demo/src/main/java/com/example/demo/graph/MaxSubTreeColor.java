@@ -1,22 +1,22 @@
 package com.example.demo.graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MaxSubTreeColor {
     static class Result {
-        boolean uniform;
-        int color;
+        boolean color;
         int size;
 
-        Result(boolean uniform, int color, int size) {
-            this.uniform = uniform;
+        Result(boolean color, int size) {
             this.color = color;
             this.size = size;
         }
     }
 
-    private List<Integer>[] graph;
+    private Map<Integer, List<Integer>> graph;
     private int[] colors;
     private int answer = 1;
 
@@ -24,14 +24,19 @@ public class MaxSubTreeColor {
 
         int n = colors.length;
         this.colors = colors;
-        graph = new ArrayList[n];
-        for (int i = 0; i < n; i++)
-            graph[i] = new ArrayList<>();
+        // Build graph
+        graph = new HashMap<>();
 
-        // Build tree
-        for (int[] e : edges) {
-            graph[e[0]].add(e[1]);
-            graph[e[1]].add(e[0]);
+        for (int i = 0; i < colors.length; i++) {
+            graph.put(i, new ArrayList<>());
+        }
+
+        for (int[] edge : edges) {
+            int u = edge[0];
+            int v = edge[1];
+
+            graph.get(u).add(v);
+            graph.get(v).add(u);
         }
 
         dfs(0, -1);
@@ -39,26 +44,30 @@ public class MaxSubTreeColor {
     }
 
     private Result dfs(int node, int parent) {
-        boolean uniform = true;
+        boolean sameColor = true;
         int size = 1;
 
-        for (int child : graph[node]) {
+        for (int child : graph.get(node)) {
+            System.out.println("Loop start child: " + child);
 
             if (child == parent)
                 continue;
 
             Result r = dfs(child, node);
+            System.out.println("Right after calling dfs: " + child);
+            System.out.println("Result size : " + r.size + "  color : " + r.color);
 
             size += r.size;
 
-            if (!r.uniform || r.color != colors[node])
-                uniform = false;
+            if (!r.color || colors[child] != colors[node])
+                sameColor = false;
+            System.out.println("end of iteration: " + child);
         }
 
-        if (uniform)
+        if (sameColor)
             answer = Math.max(answer, size);
 
-        return new Result(uniform, colors[node], size);
+        return new Result(sameColor, size);
     }
 
     public static void main(String[] args) {

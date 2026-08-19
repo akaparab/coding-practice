@@ -9,6 +9,7 @@ public class MaxLenOfSunStr {
 
         int left = 0;
         int maxLen = 0;
+        String res = "";
 
         for (int right = 0; right < s.length(); right++) {
             char rightChar = s.charAt(right);
@@ -28,6 +29,10 @@ public class MaxLenOfSunStr {
                 left++;
             }
 
+            if (right - left + 1 > maxLen) {
+                res = s.substring(left, right + 1);
+            }
+            System.out.println(res);
             maxLen = Math.max(maxLen, right - left + 1);
         }
 

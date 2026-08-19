@@ -12,10 +12,10 @@ public class DailyTemperature {
             int curTemp = temperatures[i];
 
             while (!stack.isEmpty() && temperatures[stack.peek()] < curTemp) {
-                int idx = stack.poll();
+                int idx = stack.pop();
                 ans[idx] = i - idx;
             }
-            stack.offer(i);
+            stack.push(i);
         }
         return ans;
 

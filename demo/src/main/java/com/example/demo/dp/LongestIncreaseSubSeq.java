@@ -22,11 +22,43 @@ public class LongestIncreaseSubSeq {
         return res;
     }
 
+    public int lengthOfLISBinarySearch(int[] nums) {
+
+        int[] tails = new int[nums.length];
+        int size = 0;
+
+        for (int num : nums) {
+
+            int left = 0;
+            int right = size;
+
+            while (left < right) {
+
+                int mid = left + (right - left) / 2;
+
+                if (tails[mid] < num)
+                    left = mid + 1;
+                else
+                    right = mid;
+            }
+
+            tails[left] = num;
+
+            if (left == size)
+                size++;
+        }
+
+        System.out.println(Arrays.toString(tails));
+        return size;
+    }
+
+
     public static void main(String[] args) {
         int[] nums = {10, 9, 2, 5, 3, 7, 101, 18};
-        
+
         LongestIncreaseSubSeq obj = new LongestIncreaseSubSeq();
-        System.out.println(obj.lengthOfLIS(nums));
+        // System.out.println(obj.lengthOfLIS(nums));
+        System.out.println(obj.lengthOfLISBinarySearch(nums));
 
     }
 }
